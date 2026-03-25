@@ -1,24 +1,19 @@
-{% extends "base.html" %}
+{% extends "store/base.html" %}
 
 {% block content %}
-<h2>Reddit Feed</h2>
-
-{% if error %}
-    <p style="color: red;">Error: {{ error }}</p>
-{% endif %}
+<h1>Reddit Feed</h1>
 
 {% if posts %}
     <ul>
-        {% for post in posts %}
-            <li>
-                <a href="{{ post.url }}" target="_blank">{{ post.title }}</a><br>
-                Author: {{ post.author }} |
-                Score: {{ post.score }}
-            </li>
-            <br>
-        {% endfor %}
+    {% for post in posts %}
+        <li>
+            <strong>{{ post.title }}</strong><br>
+            by {{ post.author }}<br>
+            <a href="{{ post.url }}" target="_blank">View Post</a>
+        </li>
+    {% endfor %}
     </ul>
 {% else %}
-    <p>No posts found.</p>
+    <p>No Reddit posts found.</p>
 {% endif %}
 {% endblock %}
