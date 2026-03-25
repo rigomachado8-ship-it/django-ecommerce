@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+</head>
+<body>
+    <h1>Django eCommerce Home</h1>
+
+    <p><a href="{% url 'store:register' %}">Register</a></p>
+    <p><a href="{% url 'store:login' %}">Login</a></p>
+    <p><a href="{% url 'store:buyer_dashboard' %}">Buyer Dashboard</a></p>
+    <p><a href="{% url 'store:vendor_dashboard' %}">Vendor Dashboard</a></p>
+    <p><a href="{% url 'store:logout' %}">Logout</a></p>
+</body>
+</html>

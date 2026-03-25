@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ store.name }} Products</title>
+</head>
+<body>
+    <h1>Products in {{ store.name }}</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <p><a href="{% url 'store:store_list' %}">Back to Stores</a></p>
+
+    {% for product in products %}
+        <hr>
+        <h3>{{ product.name }}</h3>
+        <p>{{ product.description }}</p>
+        <p>Price: ${{ product.price }}</p>
+        <p>Stock: {{ product.stock }}</p>
+        <p><a href="{% url 'store:product_detail' product.pk %}">View Product</a></p>
+    {% empty %}
+        <p>No products available in this store.</p>
+    {% endfor %}
+</body>
+</html>

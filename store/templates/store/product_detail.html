@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ product.name }}</title>
+</head>
+<body>
+    <h1>{{ product.name }}</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <p><strong>Store:</strong> {{ product.store.name }}</p>
+    <p><strong>Description:</strong> {{ product.description }}</p>
+    <p><strong>Price:</strong> ${{ product.price }}</p>
+    <p><strong>Stock:</strong> {{ product.stock }}</p>
+    <p><strong>Available:</strong> {{ product.available }}</p>
+
+    <p><a href="{% url 'store:store_products' product.store.pk %}">Back to Products</a></p>
+
+    <hr>
+    <h2>Reviews</h2>
+
+    {% for review in reviews %}
+        <p><strong>{{ review.buyer.username }}</strong> - Rating: {{ review.rating }}/5</p>
+        <p>{{ review.comment }}</p>
+        {% if review.verified_purchase %}
+            <p>Verified Purchase</p>
+        {% else %}
+            <p>Unverified Review</p>
+        {% endif %}
+        <hr>
+    {% empty %}
+        <p>No reviews yet.</p>
+    {% endfor %}
+</body>
+</html>

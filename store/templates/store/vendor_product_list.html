@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Products</title>
+</head>
+<body>
+    <h1>My Products</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <p><a href="{% url 'store:product_create' %}">Create Product</a></p>
+    <p><a href="{% url 'store:vendor_dashboard' %}">Back to Dashboard</a></p>
+
+    {% for product in products %}
+        <hr>
+        <h3>{{ product.name }}</h3>
+        <p>Store: {{ product.store.name }}</p>
+        <p>Description: {{ product.description }}</p>
+        <p>Price: ${{ product.price }}</p>
+        <p>Stock: {{ product.stock }}</p>
+        <p>Available: {{ product.available }}</p>
+        <p><a href="{% url 'store:product_update' product.pk %}">Edit</a></p>
+        <p><a href="{% url 'store:product_delete' product.pk %}">Delete</a></p>
+    {% empty %}
+        <p>No products yet.</p>
+    {% endfor %}
+</body>
+</html>

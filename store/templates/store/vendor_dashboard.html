@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vendor Dashboard</title>
+</head>
+<body>
+    <h1>Vendor Dashboard</h1>
+    <p>Welcome, {{ request.user.username }}!</p>
+    <p>You are logged in as a vendor.</p>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <p><a href="{% url 'store:store_list' %}">Manage Stores</a></p>
+    <p><a href="{% url 'store:product_list' %}">Manage Products</a></p>
+    <p><a href="{% url 'store:logout' %}">Logout</a></p>
+</body>
+</html>

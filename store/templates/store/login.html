@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+</head>
+<body>
+    <h1>Login</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Login</button>
+    </form>
+
+    <p>
+        <a href="{% url 'store:register' %}">Create an account</a>
+    </p>
+
+    <p>
+        <a href="{% url 'store:forgot_password' %}">Forgot your password?</a>
+    </p>
+</body>
+</html>

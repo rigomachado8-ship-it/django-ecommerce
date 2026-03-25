@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Stores</title>
+</head>
+<body>
+    <h1>My Stores</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <p><a href="{% url 'store:store_create' %}">Create Store</a></p>
+    <p><a href="{% url 'store:vendor_dashboard' %}">Back to Dashboard</a></p>
+
+    {% for store in stores %}
+        <hr>
+        <h3>{{ store.name }}</h3>
+        <p>{{ store.description }}</p>
+        <p>{{ store.address }}</p>
+        <p><a href="{% url 'store:store_update' store.pk %}">Edit</a></p>
+        <p><a href="{% url 'store:store_delete' store.pk %}">Delete</a></p>
+    {% empty %}
+        <p>No stores yet.</p>
+    {% endfor %}
+</body>
+</html>
