@@ -18,7 +18,7 @@
     <p><strong>Stock:</strong> {{ product.stock }}</p>
     <p><strong>Available:</strong> {{ product.available }}</p>
 
-    <p><a href="{% url 'store:store_products' product.store.pk %}">Back to Products</a></p>
+    <p><a href="{% url 'store:product_list' %}">Back to Products</a></p>
 
     <hr>
     <h2>Reviews</h2>
