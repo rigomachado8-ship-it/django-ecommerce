@@ -1,78 +1,132 @@
-# Django eCommerce API Project
+# Django eCommerce Project (Part 1)
 
 ## 📌 Overview
-This project is a Django-based eCommerce system that provides both:
-- Web interface (HTML pages)
-- REST API endpoints for stores, products, and reviews
 
-The API allows vendors to create stores, add products, and view related data.
+This project is a Django-based eCommerce application that allows vendors to create and manage stores and products. It includes REST API endpoints for handling stores, products, and reviews, along with frontend pages for user interaction.
 
 ---
 
-## ⚙️ Features Implemented
+## 🚀 Features
 
-### ✅ Store Management
-- Create store (API + HTML form)
-- View vendor stores
+### 🏪 Store Management
 
-### ✅ Product Management
-- Add product (API + HTML form)
-- View products by store
+* Create stores via API and UI
+* View stores by vendor
 
-### ✅ Reviews
-- View product reviews via API
+### 📦 Product Management
+
+* Add products to stores
+* View products for each store
+* Product detail page
+
+### 🧑‍💼 Vendor Features
+
+* Vendor dashboard
+* Vendor store list page
+* Vendor product list page
+
+### ⭐ Reviews
+
+* Product reviews API endpoint
+
+### 🌐 External Integration
+
+* Reddit feed page displaying external data
 
 ---
 
-## 🔗 API Endpoints
+## 🔌 API Endpoints
 
-| Feature | Method | Endpoint |
-|--------|--------|----------|
-| Create Store | POST | `/api/store/create/` |
-| Add Product | POST | `/api/product/add/` |
-| Vendor Stores | GET | `/api/vendor/<vendor_id>/stores/` |
-| Store Products | GET | `/api/store/<store_id>/products/` |
-| Product Reviews | GET | `/api/products/<product_id>/reviews/` |
+| Endpoint                     | Method | Description               |
+| ---------------------------- | ------ | ------------------------- |
+| `/api/store/create/`         | POST   | Create a new store        |
+| `/api/product/add/`          | POST   | Add a new product         |
+| `/api/vendor/<id>/stores/`   | GET    | Get stores for a vendor   |
+| `/api/store/<id>/products/`  | GET    | Get products for a store  |
+| `/api/product/<id>/reviews/` | GET    | Get reviews for a product |
 
 ---
 
-## 🧪 API Testing
+## 🛠️ Technologies Used
 
-API endpoints were tested using **Thunder Client (VS Code)**.
+* Python
+* Django
+* Django REST Framework
+* SQLite
+* HTML (Django Templates)
+* Thunder Client (API testing)
 
-Each request includes:
-- JSON request body (for POST)
-- Response output
-- Status codes (201 Created)
+---
+
+## 📂 Project Structure
+
+django_ecommerce_part1/
+│
+├── ecommerce_project/
+├── store/
+│   ├── templates/
+│   ├── models.py
+│   ├── views.py
+│   ├── urls.py
+│
+├── screenshots/
+├── manage.py
+├── requirements.txt
+└── README.md
 
 ---
 
 ## 📸 Screenshots
 
-All required screenshots are included in the `/screenshots` folder:
+All required screenshots are located in the `/screenshots/` folder:
 
-- Create Store API
-- Add Product API
-- Vendor Stores API
-- Store Products API
-- Product Reviews API
-- Create Product Page
-- Create Store Page
+* create_store_api.png
+* create_product_api.png
+* vendor_stores_api.png
+* store_products_api.png
+* product_reviews_api.png
+* reddit_feed.png
+* vendor_dashboard.png
+* vendor_stores_page.png
+* vendor_products_page.png
+* product_detail.png
 
 ---
 
-## 🗂 Project Structure
+## ▶️ How to Run the Project
 
-## 🚀 How to Run the Project
+1. Clone the repository:
+   git clone https://github.com/rigomachado8-ship-it/django_ecommerce_part1.git
 
-1. Clone the repository  
-2. Create virtual environment  
-3. Install dependencies  
-   pip install -r requirements.txt  
-4. Run migrations  
-   python manage.py migrate  
-5. Start server  
-   python manage.py runserver  
+2. Navigate into the project:
+   cd django_ecommerce_part1
 
-## 👤 Author
+3. Create a virtual environment:
+   python3 -m venv venv
+   source venv/bin/activate
+
+4. Install dependencies:
+   pip install -r requirements.txt
+
+5. Apply migrations:
+   python manage.py migrate
+
+6. Run the development server:
+   python manage.py runserver
+
+7. Open in browser:
+   http://127.0.0.1:8000/
+
+---
+
+## ✅ Notes
+
+* APIs were tested using Thunder Client
+* Screenshots are included as proof of functionality
+* Project follows Django best practices
+
+---
+
+## 👨‍💻 Author
+
 Rodrigo Machado
