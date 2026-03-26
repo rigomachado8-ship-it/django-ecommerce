@@ -371,7 +371,7 @@ def cart_detail(request):
             }
         )
 
-    return render(request, "store/cart_detail.html", {"cart": cart})
+    return render(request, "store/cart.html", {"cart": cart})
 
 
 @login_required

@@ -12,7 +12,7 @@
         {% endfor %}
     {% endif %}
 
-    <p><a href="{% url 'store:store_create' %}">Create Store</a></p>
+    <p><a href="{% url 'store:create_store' %}">Create Store</a></p>
     <p><a href="{% url 'store:vendor_dashboard' %}">Back to Dashboard</a></p>
 
     {% for store in stores %}
@@ -20,6 +20,7 @@
         <h3>{{ store.name }}</h3>
         <p>{{ store.description }}</p>
         <p>{{ store.address }}</p>
+
         <p><a href="{% url 'store:store_update' store.pk %}">Edit</a></p>
         <p><a href="{% url 'store:store_delete' store.pk %}">Delete</a></p>
     {% empty %}

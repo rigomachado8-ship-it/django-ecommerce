@@ -12,17 +12,17 @@
         {% endfor %}
     {% endif %}
 
-    <p><a href="{% url 'store:product_create' %}">Create Product</a></p>
+    <p><a href="{% url 'store:create_product' %}">Create Product</a></p>
     <p><a href="{% url 'store:vendor_dashboard' %}">Back to Dashboard</a></p>
 
     {% for product in products %}
         <hr>
         <h3>{{ product.name }}</h3>
-        <p>Store: {{ product.store.name }}</p>
-        <p>Description: {{ product.description }}</p>
+        <p>{{ product.description }}</p>
         <p>Price: ${{ product.price }}</p>
         <p>Stock: {{ product.stock }}</p>
-        <p>Available: {{ product.available }}</p>
+        <p>Store: {{ product.store.name }}</p>
+
         <p><a href="{% url 'store:product_update' product.pk %}">Edit</a></p>
         <p><a href="{% url 'store:product_delete' product.pk %}">Delete</a></p>
     {% empty %}
