@@ -1,132 +1,212 @@
 # Django eCommerce Project (Part 1)
 
-## 📌 Overview
+## Overview
 
-This project is a Django-based eCommerce application that allows vendors to create and manage stores and products. It includes REST API endpoints for handling stores, products, and reviews, along with frontend pages for user interaction.
+This project is a Django-based eCommerce web application that allows users to register as buyers or vendors. Vendors can create stores and manage products, while buyers can browse products, add them to a cart, and place orders.
 
----
-
-## 🚀 Features
-
-### 🏪 Store Management
-
-* Create stores via API and UI
-* View stores by vendor
-
-### 📦 Product Management
-
-* Add products to stores
-* View products for each store
-* Product detail page
-
-### 🧑‍💼 Vendor Features
-
-* Vendor dashboard
-* Vendor store list page
-* Vendor product list page
-
-### ⭐ Reviews
-
-* Product reviews API endpoint
-
-### 🌐 External Integration
-
-* Reddit feed page displaying external data
+The system also includes REST API endpoints, authentication, and password reset functionality.
 
 ---
 
-## 🔌 API Endpoints
+## Technologies Used
 
-| Endpoint                     | Method | Description               |
-| ---------------------------- | ------ | ------------------------- |
-| `/api/store/create/`         | POST   | Create a new store        |
-| `/api/product/add/`          | POST   | Add a new product         |
-| `/api/vendor/<id>/stores/`   | GET    | Get stores for a vendor   |
-| `/api/store/<id>/products/`  | GET    | Get products for a store  |
-| `/api/product/<id>/reviews/` | GET    | Get reviews for a product |
-
----
-
-## 🛠️ Technologies Used
-
-* Python
+* Python 3
 * Django
 * Django REST Framework
-* SQLite
+* MySQL
 * HTML (Django Templates)
-* Thunder Client (API testing)
+* Bootstrap 5
 
 ---
 
-## 📂 Project Structure
+## Features
 
-django_ecommerce_part1/
-│
-├── ecommerce_project/
-├── store/
-│   ├── templates/
-│   ├── models.py
-│   ├── views.py
-│   ├── urls.py
-│
-├── screenshots/
-├── manage.py
-├── requirements.txt
-└── README.md
+### User Management
 
----
+* User registration with role selection (buyer/vendor)
+* Login and logout functionality
+* Role-based dashboards
 
-## 📸 Screenshots
+### Vendor Features
 
-All required screenshots are located in the `/screenshots/` folder:
+* Create, update, and delete stores
+* Add, update, and delete products
+* View products by store
 
-* create_store_api.png
-* create_product_api.png
-* vendor_stores_api.png
-* store_products_api.png
-* product_reviews_api.png
-* reddit_feed.png
-* vendor_dashboard.png
-* vendor_stores_page.png
-* vendor_products_page.png
-* product_detail.png
+### Buyer Features
+
+* Browse products
+* Add products to cart
+* Checkout and place orders
+* View order history
+
+### Additional Features
+
+* Product reviews
+* Password reset via email
+* Reddit feed integration
+* REST API endpoints for stores, products, and reviews
 
 ---
 
-## ▶️ How to Run the Project
+## Project Structure
 
-1. Clone the repository:
-   git clone https://github.com/rigomachado8-ship-it/django_ecommerce_part1.git
-
-2. Navigate into the project:
-   cd django_ecommerce_part1
-
-3. Create a virtual environment:
-   python3 -m venv venv
-   source venv/bin/activate
-
-4. Install dependencies:
-   pip install -r requirements.txt
-
-5. Apply migrations:
-   python manage.py migrate
-
-6. Run the development server:
-   python manage.py runserver
-
-7. Open in browser:
-   http://127.0.0.1:8000/
+```
+store/
+├── models.py
+├── views.py
+├── serializers.py
+├── forms.py
+├── templates/
+│   └── store/
+│       ├── base.html
+│       ├── home.html
+│       └── ...
+```
 
 ---
 
-## ✅ Notes
+## Setup Instructions
 
-* APIs were tested using Thunder Client
-* Screenshots are included as proof of functionality
-* Project follows Django best practices
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/rigomachado8-ship-it/django_ecommerce_part1.git
+cd django_ecommerce_part1
+```
 
 ---
 
-## 👨‍💻 Author
+## Database Setup (MySQL) ⚠️ IMPORTANT
+
+### 1. Start MySQL
+
+```bash
+mysql -u root -p
+```
+
+Enter your MySQL password.
+
+---
+
+### 2. Create the database
+
+```sql
+CREATE DATABASE ecommerce_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+---
+
+### 3. (Optional but Recommended) Create a dedicated user
+
+```sql
+CREATE USER 'ecom_user'@'localhost' IDENTIFIED BY 'StrongPassword123!';
+GRANT ALL PRIVILEGES ON ecommerce_db.* TO 'ecom_user'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+---
+
+### 4. Configure Django database settings
+
+Update `settings.py`:
+
+```python
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ecommerce_db',
+        'USER': 'root',  # or 'ecom_user'
+        'PASSWORD': 'YOUR_PASSWORD',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+    }
+}
+```
+
+---
+
+## Installation
+
+### 1. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+### 2. Run migrations
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+---
+
+### 3. Create superuser
+
+```bash
+python manage.py createsuperuser
+```
+
+---
+
+### 4. Run development server
+
+```bash
+python manage.py runserver
+```
+
+---
+
+### 5. Access the application
+
+* Home: http://127.0.0.1:8000/
+* Admin: http://127.0.0.1:8000/admin/
+
+---
+
+## API Endpoints
+
+| Endpoint                     | Method   | Description       |
+| ---------------------------- | -------- | ----------------- |
+| `/api/product/list/`         | GET      | List all products |
+| `/api/product/<id>/`         | GET      | Product details   |
+| `/api/product/create/`       | POST     | Create product    |
+| `/api/store/create/`         | POST     | Create store      |
+| `/api/store/<id>/products/`  | GET      | Store products    |
+| `/api/vendor/<id>/stores/`   | GET      | Vendor stores     |
+| `/api/product/<id>/reviews/` | GET/POST | Product reviews   |
+
+---
+
+## Design Considerations
+
+* Models are designed with proper relationships (Store → Product → Order)
+* Validation ensures data integrity (e.g., store must have description and address)
+* Role-based access control for buyers and vendors
+* Clean separation of concerns using forms, serializers, and views
+
+---
+
+## Code Quality
+
+* Docstrings follow PEP 257 conventions
+* Clear and modular structure
+* Reusable components across views, forms, and templates
+
+---
+
+## Author
 
 Rodrigo Machado
+
+---
+
+## Notes
+
+* Ensure MySQL is running before starting the Django server
+* Database must be created before running migrations
+* Use a virtual environment for dependency management

@@ -1,3 +1,10 @@
+"""
+Views for the eCommerce application.
+
+This module contains authentication, dashboard, store, product,
+cart, checkout, password reset, and API-related views.
+"""
+
 import json
 import secrets
 from datetime import timedelta
@@ -16,14 +23,11 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework import status
 from rest_framework.authentication import BasicAuthentication
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
-
-from .serializers import StoreSerializer, ProductSerializer, ReviewSerializer
-from .functions.reddit import get_reddit_posts
 
 from .cart import Cart
 from .forms import (
@@ -34,26 +38,29 @@ from .forms import (
     RegisterForm,
     StoreForm,
 )
+from .functions.reddit import get_reddit_posts
 from .models import Order, OrderItem, Product, Profile, ResetToken, Review, Store
+from .serializers import ProductSerializer, ReviewSerializer, StoreSerializer
 
 
 def home(request):
+    """
+    Render the home page.
+    """
     return render(request, "store/home.html")
 
 
 def register_user(request):
+    """
+    Register a new user and assign the selected role.
+    """
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data["username"]
             email = form.cleaned_data["email"]
             password = form.cleaned_data["password"]
-            confirm_password = form.cleaned_data["confirm_password"]
             role = form.cleaned_data["role"]
-
-            if password != confirm_password:
-                messages.error(request, "Passwords do not match.")
-                return render(request, "store/register.html", {"form": form})
 
             if User.objects.filter(username=username).exists():
                 messages.error(request, "Username already exists.")
@@ -96,6 +103,9 @@ def register_user(request):
 
 
 def login_user(request):
+    """
+    Authenticate and log in a user.
+    """
     if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -118,12 +128,18 @@ def login_user(request):
 
 
 def logout_user(request):
+    """
+    Log out the current user.
+    """
     logout(request)
     return redirect("store:login")
 
 
 @login_required
 def buyer_dashboard(request):
+    """
+    Display the buyer dashboard for users with the buyer role.
+    """
     if not hasattr(request.user, "profile") or request.user.profile.role != "buyer":
         messages.error(request, "You do not have access to this page.")
         return redirect("store:home")
@@ -132,6 +148,9 @@ def buyer_dashboard(request):
 
 @login_required
 def vendor_dashboard(request):
+    """
+    Display the vendor dashboard for users with the vendor role.
+    """
     if not hasattr(request.user, "profile") or request.user.profile.role != "vendor":
         messages.error(request, "You do not have access to this page.")
         return redirect("store:home")
@@ -140,6 +159,9 @@ def vendor_dashboard(request):
 
 @login_required
 def vendor_store_list(request):
+    """
+    Display all stores owned by the current vendor.
+    """
     if not hasattr(request.user, "profile") or request.user.profile.role != "vendor":
         messages.error(request, "You do not have access to this page.")
         return redirect("store:home")
@@ -150,6 +172,9 @@ def vendor_store_list(request):
 
 @login_required
 def store_create(request):
+    """
+    Create a new store for the current vendor.
+    """
     if not hasattr(request.user, "profile") or request.user.profile.role != "vendor":
         messages.error(request, "You do not have access to this page.")
         return redirect("store:home")
@@ -161,7 +186,7 @@ def store_create(request):
             store.vendor = request.user
             store.save()
             messages.success(request, "Store created successfully.")
-            return redirect("store:store_list")
+            return redirect("store:vendor_store_list")
     else:
         form = StoreForm()
 
@@ -171,6 +196,9 @@ def store_create(request):
 @login_required
 @permission_required("store.change_store", raise_exception=True)
 def store_update(request, pk):
+    """
+    Update a store owned by the current vendor.
+    """
     if not hasattr(request.user, "profile") or request.user.profile.role != "vendor":
         messages.error(request, "You do not have access to this page.")
         return redirect("store:home")
@@ -192,6 +220,9 @@ def store_update(request, pk):
 @login_required
 @permission_required("store.delete_store", raise_exception=True)
 def store_delete(request, pk):
+    """
+    Delete a store owned by the current vendor.
+    """
     if not hasattr(request.user, "profile") or request.user.profile.role != "vendor":
         messages.error(request, "You do not have access to this page.")
         return redirect("store:home")
@@ -208,6 +239,9 @@ def store_delete(request, pk):
 
 @login_required
 def vendor_product_list(request):
+    """
+    Display all products belonging to the current vendor's stores.
+    """
     if not hasattr(request.user, "profile") or request.user.profile.role != "vendor":
         messages.error(request, "You do not have access to this page.")
         return redirect("store:home")
@@ -218,37 +252,46 @@ def vendor_product_list(request):
 
 @login_required
 def product_create(request):
+    """
+    Create a new product for one of the current vendor's stores.
+    """
     if not hasattr(request.user, "profile") or request.user.profile.role != "vendor":
         messages.error(request, "You do not have access to this page.")
         return redirect("store:home")
 
+    vendor_stores = Store.objects.filter(vendor=request.user)
+
+    if not vendor_stores.exists():
+        messages.error(request, "You must create a store before adding a product.")
+        return redirect("store:create_store")
+
     if request.method == "POST":
         form = ProductForm(request.POST, request.FILES)
-
-        if "store" in form.fields:
-            form.fields["store"].queryset = Store.objects.filter(vendor=request.user)
+        form.fields["store"].queryset = vendor_stores
 
         if form.is_valid():
             product = form.save(commit=False)
 
-            if hasattr(product, "store") and product.store.vendor != request.user:
+            if product.store.vendor != request.user:
                 messages.error(request, "You can only add products to your own stores.")
-                return redirect("store:product_list")
+                return redirect("store:vendor_product_list")
 
             product.save()
             messages.success(request, "Product created successfully.")
-            return redirect("store:product_list")
+            return redirect("store:vendor_product_list")
     else:
         form = ProductForm()
-
-        if "store" in form.fields:
-            form.fields["store"].queryset = Store.objects.filter(vendor=request.user)
+        form.fields["store"].queryset = vendor_stores
 
     return render(request, "store/product_form.html", {"form": form, "title": "Create Product"})
+
 
 @login_required
 @permission_required("store.change_product", raise_exception=True)
 def product_update(request, pk):
+    """
+    Update a product belonging to one of the current vendor's stores.
+    """
     if not hasattr(request.user, "profile") or request.user.profile.role != "vendor":
         messages.error(request, "You do not have access to this page.")
         return redirect("store:home")
@@ -261,9 +304,11 @@ def product_update(request, pk):
 
         if form.is_valid():
             updated_product = form.save(commit=False)
+
             if updated_product.store.vendor != request.user:
                 messages.error(request, "You can only edit products in your own stores.")
                 return redirect("store:vendor_product_list")
+
             updated_product.save()
             messages.success(request, "Product updated successfully.")
             return redirect("store:vendor_product_list")
@@ -277,6 +322,9 @@ def product_update(request, pk):
 @login_required
 @permission_required("store.delete_product", raise_exception=True)
 def product_delete(request, pk):
+    """
+    Delete a product belonging to one of the current vendor's stores.
+    """
     if not hasattr(request.user, "profile") or request.user.profile.role != "vendor":
         messages.error(request, "You do not have access to this page.")
         return redirect("store:home")
@@ -293,12 +341,18 @@ def product_delete(request, pk):
 
 @login_required
 def store_list(request):
+    """
+    Display all stores.
+    """
     stores = Store.objects.all()
     return render(request, "store/store_list.html", {"stores": stores})
 
 
 @login_required
 def store_detail(request, store_id):
+    """
+    Display one store and its available products.
+    """
     store = get_object_or_404(Store, pk=store_id)
     products = store.products.filter(available=True)
     return render(request, "store/store_products.html", {"store": store, "products": products})
@@ -306,12 +360,18 @@ def store_detail(request, store_id):
 
 @login_required
 def product_list(request):
+    """
+    Display all available products.
+    """
     products = Product.objects.filter(available=True)
     return render(request, "store/product_list.html", {"products": products})
 
 
 @login_required
 def product_detail(request, product_id):
+    """
+    Display details for a single available product.
+    """
     product = get_object_or_404(Product, pk=product_id, available=True)
     reviews = Review.objects.filter(product=product)
     form = CartAddProductForm()
@@ -328,16 +388,25 @@ def product_detail(request, product_id):
 
 @login_required
 def create_store(request):
+    """
+    Alias view for store creation.
+    """
     return store_create(request)
 
 
 @login_required
 def create_product(request):
+    """
+    Alias view for product creation.
+    """
     return product_create(request)
 
 
 @require_POST
 def cart_add(request, product_id):
+    """
+    Add a product to the shopping cart.
+    """
     cart = Cart(request)
     product = get_object_or_404(Product, id=product_id, available=True)
     form = CartAddProductForm(request.POST)
@@ -354,6 +423,9 @@ def cart_add(request, product_id):
 
 
 def cart_remove(request, product_id):
+    """
+    Remove a product from the shopping cart.
+    """
     cart = Cart(request)
     product = get_object_or_404(Product, id=product_id)
     cart.remove(product)
@@ -361,6 +433,9 @@ def cart_remove(request, product_id):
 
 
 def cart_detail(request):
+    """
+    Display the current contents of the shopping cart.
+    """
     cart = Cart(request)
 
     for item in cart:
@@ -376,6 +451,9 @@ def cart_detail(request):
 
 @login_required
 def checkout(request):
+    """
+    Process checkout and create an order from the shopping cart.
+    """
     cart = Cart(request)
 
     if len(cart) == 0:
@@ -460,18 +538,27 @@ def checkout(request):
 
 @login_required
 def order_success(request, order_id):
+    """
+    Display order success details for the current user.
+    """
     order = get_object_or_404(Order, id=order_id, user=request.user)
     return render(request, "store/order_success.html", {"order": order})
 
 
 @login_required
 def order_list(request):
+    """
+    Display all orders for the current user.
+    """
     orders = Order.objects.filter(user=request.user).order_by("-id")
     return render(request, "store/order_list.html", {"orders": orders})
 
 
 @login_required
 def order_detail(request, order_id):
+    """
+    Display one order and its items for the current user.
+    """
     order = get_object_or_404(Order, id=order_id, user=request.user)
     order_items = OrderItem.objects.filter(order=order)
 
@@ -486,12 +573,18 @@ def order_detail(request, order_id):
 
 
 def build_reset_email(user, reset_url):
+    """
+    Build the password reset email message for a user.
+    """
     subject = "Password Reset"
     body = f"Hi {user.username},\n\nUse this link to reset your password:\n{reset_url}"
     return EmailMessage(subject, body, "noreply@example.com", [user.email])
 
 
 def generate_reset_url(request, user):
+    """
+    Generate and store a password reset token, then return the reset URL.
+    """
     raw_token = secrets.token_urlsafe(16)
     hashed_token = sha1(raw_token.encode()).hexdigest()
     expiry_date = timezone.now() + timedelta(minutes=10)
@@ -507,6 +600,9 @@ def generate_reset_url(request, user):
 
 
 def forgot_password(request):
+    """
+    Handle password reset requests by email.
+    """
     if request.method == "POST":
         email = request.POST.get("email")
 
@@ -531,6 +627,9 @@ def forgot_password(request):
 
 
 def reset_user_password(request, token):
+    """
+    Validate a password reset token and render the reset form.
+    """
     hashed_token = sha1(token.encode()).hexdigest()
 
     try:
@@ -557,6 +656,9 @@ def reset_user_password(request, token):
 
 
 def reset_password(request):
+    """
+    Update the user's password after validating the reset session.
+    """
     if request.method == "POST":
         username = request.session.get("reset_user")
         token = request.session.get("reset_token")
@@ -597,14 +699,18 @@ def reset_password(request):
     return redirect("store:forgot_password")
 
 
-# API VIEWS
-
 def api_product_list(request):
+    """
+    Return a JSON list of all products.
+    """
     products = Product.objects.all().values()
     return JsonResponse(list(products), safe=False)
 
 
 def api_product_detail(request, pk):
+    """
+    Return JSON details for a single product.
+    """
     try:
         product = Product.objects.get(pk=pk)
         data = {
@@ -622,6 +728,9 @@ def api_product_detail(request, pk):
 
 @csrf_exempt
 def api_product_create(request):
+    """
+    Create a product through the basic JSON API.
+    """
     if request.method != "POST":
         return JsonResponse({"error": "POST request required"}, status=405)
 
@@ -644,6 +753,9 @@ def api_product_create(request):
 
 @csrf_exempt
 def api_product_delete(request, pk):
+    """
+    Delete a product through the basic JSON API.
+    """
     if request.method != "DELETE":
         return JsonResponse({"error": "DELETE request required"}, status=405)
 
@@ -653,100 +765,118 @@ def api_product_delete(request, pk):
         return JsonResponse({"message": "Product deleted"})
     except Product.DoesNotExist:
         return JsonResponse({"error": "Product not found"}, status=404)
-    
-    # =========================
-# DRF API VIEWS (PART 2 TASK)
-# =========================
 
-@api_view(['POST'])
+
+@api_view(["POST"])
 @authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def api_create_store(request):
+    """
+    Create a store through the DRF API for the authenticated vendor.
+    """
     data = request.data.copy()
-    vendor_id = data.get('vendor')
+    vendor_id = data.get("vendor")
 
     if vendor_id is None:
-        return Response({'error': 'Vendor field is required.'}, status=400)
+        return Response({"error": "Vendor field is required."}, status=status.HTTP_400_BAD_REQUEST)
 
     if int(vendor_id) != request.user.id:
-        return Response({'error': 'You can only create a store for yourself.'}, status=403)
+        return Response(
+            {"error": "You can only create a store for yourself."},
+            status=status.HTTP_403_FORBIDDEN,
+        )
 
     serializer = StoreSerializer(data=data)
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data, status=201)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    return Response(serializer.errors, status=400)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 @authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def api_add_product(request):
+    """
+    Add a product through the DRF API to a store owned by the authenticated vendor.
+    """
     data = request.data.copy()
-    store_id = data.get('store')
+    store_id = data.get("store")
 
     if store_id is None:
-        return Response({'error': 'Store field is required.'}, status=400)
+        return Response({"error": "Store field is required."}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
         store = Store.objects.get(id=store_id)
     except Store.DoesNotExist:
-        return Response({'error': 'Store not found'}, status=404)
+        return Response({"error": "Store not found"}, status=status.HTTP_404_NOT_FOUND)
 
     if store.vendor != request.user:
-        return Response({'error': 'You can only add products to your own store'}, status=403)
+        return Response(
+            {"error": "You can only add products to your own store"},
+            status=status.HTTP_403_FORBIDDEN,
+        )
 
     serializer = ProductSerializer(data=data)
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data, status=201)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    return Response(serializer.errors, status=400)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def api_vendor_stores(request, vendor_id):
+    """
+    Return all stores for a given vendor.
+    """
     stores = Store.objects.filter(vendor_id=vendor_id)
     serializer = StoreSerializer(stores, many=True)
     return Response(serializer.data)
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def api_store_products(request, store_id):
+    """
+    Return all products for a given store.
+    """
     products = Product.objects.filter(store_id=store_id)
     serializer = ProductSerializer(products, many=True)
     return Response(serializer.data)
 
 
-@api_view(['GET', 'POST'])
+@api_view(["GET", "POST"])
 @authentication_classes([BasicAuthentication])
 def api_product_reviews(request, product_id):
-    if request.method == 'GET':
+    """
+    Return or create reviews for a given product through the DRF API.
+    """
+    if request.method == "GET":
         reviews = Review.objects.filter(product_id=product_id)
         serializer = ReviewSerializer(reviews, many=True)
         return Response(serializer.data)
 
-    elif request.method == 'POST':
-        if not request.user or not request.user.is_authenticated:
-            return Response(
-                {'error': 'Authentication required.'},
-                status=401
-            )
+    if not request.user or not request.user.is_authenticated:
+        return Response({"error": "Authentication required."}, status=status.HTTP_401_UNAUTHORIZED)
 
-        data = request.data.copy()
-        data['user'] = request.user.id
-        data['product'] = product_id
+    data = request.data.copy()
+    data["user"] = request.user.id
+    data["product"] = product_id
 
-        serializer = ReviewSerializer(data=data)
+    serializer = ReviewSerializer(data=data)
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        return Response(serializer.errors, status=400)
-    
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 def reddit_feed(request):
+    """
+    Display a small Reddit feed from the Python subreddit.
+    """
     posts = []
     error = None
 
@@ -755,7 +885,11 @@ def reddit_feed(request):
     except Exception as e:
         error = str(e)
 
-    return render(request, "store/reddit_feed.html", {
-        "posts": posts,
-        "error": error,
-    })
+    return render(
+        request,
+        "store/reddit_feed.html",
+        {
+            "posts": posts,
+            "error": error,
+        },
+    )

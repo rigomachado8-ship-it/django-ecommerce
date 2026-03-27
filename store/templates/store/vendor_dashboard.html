@@ -1,21 +1,21 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Vendor Dashboard</title>
-</head>
-<body>
-    <h1>Vendor Dashboard</h1>
-    <p>Welcome, {{ request.user.username }}!</p>
-    <p>You are logged in as a vendor.</p>
+{% extends "store/base.html" %}
 
-    {% if messages %}
-        {% for message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
-    {% endif %}
+{% block content %}
+<h2>Vendor Dashboard</h2>
 
-    <p><a href="{% url 'store:vendor_store_list' %}">Manage Stores</a></p>
-    <p><a href="{% url 'store:vendor_product_list' %}">Manage Products</a></p>
-    <p><a href="{% url 'store:logout' %}">Logout</a></p>
-</body>
-</html>
+<p class="lead">Welcome, {{ request.user.username }}!</p>
+
+<div class="d-flex gap-3 mt-4">
+    <a class="btn btn-primary" href="{% url 'store:vendor_store_list' %}">
+        Manage Stores
+    </a>
+
+    <a class="btn btn-success" href="{% url 'store:vendor_product_list' %}">
+        Manage Products
+    </a>
+
+    <a class="btn btn-danger" href="{% url 'store:logout' %}">
+        Logout
+    </a>
+</div>
+{% endblock %}
