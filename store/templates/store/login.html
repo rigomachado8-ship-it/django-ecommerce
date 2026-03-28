@@ -1,29 +1,37 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Login</title>
-</head>
-<body>
-    <h1>Login</h1>
+{% extends "store/base.html" %}
 
-    {% if messages %}
-        {% for message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
-    {% endif %}
+{% block title %}Login | Django eCommerce{% endblock %}
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Login</button>
-    </form>
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="mb-4">Login</h2>
 
-    <p>
-        <a href="{% url 'store:register' %}">Create an account</a>
-    </p>
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-warning">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
 
-    <p>
-        <a href="{% url 'store:forgot_password' %}">Forgot your password?</a>
-    </p>
-</body>
-</html>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+
+                <div class="mt-3">
+                    <p class="mb-2">
+                        <a href="{% url 'store:register' %}">Create an account</a>
+                    </p>
+                    <p class="mb-0">
+                        <a href="{% url 'store:forgot_password' %}">Forgot your password?</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

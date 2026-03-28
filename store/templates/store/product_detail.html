@@ -1,39 +1,58 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{{ product.name }}</title>
-</head>
-<body>
-    <h1>{{ product.name }}</h1>
+{% extends "store/base.html" %}
 
+{% block title %}{{ product.name }} | Django eCommerce{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
     {% if messages %}
         {% for message in messages %}
-            <p>{{ message }}</p>
+            <div class="alert alert-info">{{ message }}</div>
         {% endfor %}
     {% endif %}
 
-    <p><strong>Store:</strong> {{ product.store.name }}</p>
-    <p><strong>Description:</strong> {{ product.description }}</p>
-    <p><strong>Price:</strong> ${{ product.price }}</p>
-    <p><strong>Stock:</strong> {{ product.stock }}</p>
-    <p><strong>Available:</strong> {{ product.available }}</p>
+    <div class="card shadow-sm mb-4">
+        <div class="card-body p-4">
+            <h2 class="mb-3">{{ product.name }}</h2>
 
-    <p><a href="{% url 'store:product_list' %}">Back to Products</a></p>
+            <p><strong>Store:</strong> {{ product.store.name }}</p>
+            <p><strong>Description:</strong> {{ product.description }}</p>
+            <p><strong>Price:</strong> ${{ product.price }}</p>
+            <p><strong>Stock:</strong> {{ product.stock }}</p>
+            <p><strong>Available:</strong> {{ product.available|yesno:"Yes,No" }}</p>
 
-    <hr>
-    <h2>Reviews</h2>
+            <form method="post" action="{% url 'store:cart_add' product.id %}" class="mt-3">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-success">Add to Cart</button>
+            </form>
 
-    {% for review in reviews %}
-        <p><strong>{{ review.buyer.username }}</strong> - Rating: {{ review.rating }}/5</p>
-        <p>{{ review.comment }}</p>
-        {% if review.verified_purchase %}
-            <p>Verified Purchase</p>
-        {% else %}
-            <p>Unverified Review</p>
-        {% endif %}
-        <hr>
-    {% empty %}
-        <p>No reviews yet.</p>
-    {% endfor %}
-</body>
-</html>
+            <a href="{% url 'store:product_list' %}" class="btn btn-secondary mt-3">Back to Products</a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <h3 class="mb-3">Reviews</h3>
+
+            {% for review in reviews %}
+                <div class="mb-3">
+                    <p class="mb-1">
+                        <strong>{{ review.user.username }}</strong> - Rating: {{ review.rating }}/5
+                    </p>
+                    <p class="mb-1">{{ review.comment }}</p>
+                    <small class="text-muted">
+                        {% if review.verified_purchase %}
+                            Verified Purchase
+                        {% else %}
+                            Unverified Review
+                        {% endif %}
+                    </small>
+                </div>
+                <hr>
+            {% empty %}
+                <p class="mb-0">No reviews yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

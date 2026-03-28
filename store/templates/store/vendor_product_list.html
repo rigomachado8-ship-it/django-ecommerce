@@ -1,32 +1,39 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>My Products</title>
-</head>
-<body>
-    <h1>My Products</h1>
+{% extends "store/base.html" %}
+
+{% block title %}My Products | Django eCommerce{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">My Products</h2>
 
     {% if messages %}
         {% for message in messages %}
-            <p>{{ message }}</p>
+            <div class="alert alert-info">{{ message }}</div>
         {% endfor %}
     {% endif %}
 
-    <p><a href="{% url 'store:create_product' %}">Create Product</a></p>
-    <p><a href="{% url 'store:vendor_dashboard' %}">Back to Dashboard</a></p>
+    <div class="d-flex gap-2 mb-4">
+        <a href="{% url 'store:create_product' %}" class="btn btn-success">Create Product</a>
+        <a href="{% url 'store:vendor_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
 
     {% for product in products %}
-        <hr>
-        <h3>{{ product.name }}</h3>
-        <p>{{ product.description }}</p>
-        <p>Price: ${{ product.price }}</p>
-        <p>Stock: {{ product.stock }}</p>
-        <p>Store: {{ product.store.name }}</p>
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <h4>{{ product.name }}</h4>
+                <p class="mb-1">{{ product.description }}</p>
+                <p class="mb-1"><strong>Price:</strong> ${{ product.price }}</p>
+                <p class="mb-1"><strong>Stock:</strong> {{ product.stock }}</p>
+                <p class="mb-3"><strong>Store:</strong> {{ product.store.name }}</p>
 
-        <p><a href="{% url 'store:product_update' product.pk %}">Edit</a></p>
-        <p><a href="{% url 'store:product_delete' product.pk %}">Delete</a></p>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'store:product_update' product.pk %}" class="btn btn-primary">Edit</a>
+                    <a href="{% url 'store:product_delete' product.pk %}" class="btn btn-danger">Delete</a>
+                </div>
+            </div>
+        </div>
     {% empty %}
-        <p>No products yet.</p>
+        <div class="alert alert-info">No products yet.</div>
     {% endfor %}
-</body>
-</html>
+</div>
+{% endblock %}

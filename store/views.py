@@ -13,7 +13,7 @@ from hashlib import sha1
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group, User
 from django.core.mail import EmailMessage, send_mail
 from django.http import JsonResponse
@@ -194,7 +194,6 @@ def store_create(request):
 
 
 @login_required
-@permission_required("store.change_store", raise_exception=True)
 def store_update(request, pk):
     """
     Update a store owned by the current vendor.
@@ -218,7 +217,6 @@ def store_update(request, pk):
 
 
 @login_required
-@permission_required("store.delete_store", raise_exception=True)
 def store_delete(request, pk):
     """
     Delete a store owned by the current vendor.
@@ -287,7 +285,6 @@ def product_create(request):
 
 
 @login_required
-@permission_required("store.change_product", raise_exception=True)
 def product_update(request, pk):
     """
     Update a product belonging to one of the current vendor's stores.
@@ -320,7 +317,6 @@ def product_update(request, pk):
 
 
 @login_required
-@permission_required("store.delete_product", raise_exception=True)
 def product_delete(request, pk):
     """
     Delete a product belonging to one of the current vendor's stores.

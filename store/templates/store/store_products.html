@@ -1,28 +1,33 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{{ store.name }} Products</title>
-</head>
-<body>
-    <h1>Products in {{ store.name }}</h1>
+{% extends "store/base.html" %}
+
+{% block title %}{{ store.name }} Products | Django eCommerce{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Products in {{ store.name }}</h2>
 
     {% if messages %}
         {% for message in messages %}
-            <p>{{ message }}</p>
+            <div class="alert alert-info">{{ message }}</div>
         {% endfor %}
     {% endif %}
 
-    <p><a href="{% url 'store:store_list' %}">Back to Stores</a></p>
+    <div class="mb-3">
+        <a href="{% url 'store:store_list' %}" class="btn btn-secondary">Back to Stores</a>
+    </div>
 
     {% for product in products %}
-        <hr>
-        <h3>{{ product.name }}</h3>
-        <p>{{ product.description }}</p>
-        <p>Price: ${{ product.price }}</p>
-        <p>Stock: {{ product.stock }}</p>
-        <p><a href="{% url 'store:product_detail' product.pk %}">View Product</a></p>
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <h4>{{ product.name }}</h4>
+                <p class="mb-1">{{ product.description }}</p>
+                <p class="mb-1"><strong>Price:</strong> ${{ product.price }}</p>
+                <p class="mb-3"><strong>Stock:</strong> {{ product.stock }}</p>
+                <a href="{% url 'store:product_detail' product.pk %}" class="btn btn-primary">View Product</a>
+            </div>
+        </div>
     {% empty %}
-        <p>No products available in this store.</p>
+        <div class="alert alert-info">No products available in this store.</div>
     {% endfor %}
-</body>
-</html>
+</div>
+{% endblock %}

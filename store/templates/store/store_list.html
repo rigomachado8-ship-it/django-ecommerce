@@ -1,27 +1,32 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Browse Stores</title>
-</head>
-<body>
-    <h1>Browse Stores</h1>
+{% extends "store/base.html" %}
+
+{% block title %}Browse Stores | Django eCommerce{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Browse Stores</h2>
 
     {% if messages %}
         {% for message in messages %}
-            <p>{{ message }}</p>
+            <div class="alert alert-info">{{ message }}</div>
         {% endfor %}
     {% endif %}
 
-    <p><a href="{% url 'store:buyer_dashboard' %}">Back to Dashboard</a></p>
+    <div class="mb-3">
+        <a href="{% url 'store:buyer_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
 
     {% for store in stores %}
-        <hr>
-        <h3>{{ store.name }}</h3>
-        <p>{{ store.description }}</p>
-        <p>{{ store.address }}</p>
-        <p><a href="{% url 'store:store_detail' store.pk %}">View Products</a></p>
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <h4>{{ store.name }}</h4>
+                <p class="mb-1">{{ store.description }}</p>
+                <p class="mb-3"><strong>Address:</strong> {{ store.address }}</p>
+                <a href="{% url 'store:store_detail' store.pk %}" class="btn btn-primary">View Products</a>
+            </div>
+        </div>
     {% empty %}
-        <p>No stores available.</p>
+        <div class="alert alert-info">No stores available.</div>
     {% endfor %}
-</body>
-</html>
+</div>
+{% endblock %}

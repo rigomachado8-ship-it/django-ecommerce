@@ -1,14 +1,24 @@
-{% extends 'base.html' %}
+{% extends "store/base.html" %}
+
+{% block title %}Order Success | Django eCommerce{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-    <h2>Order Placed Successfully</h2>
-    <p>Thank you for your order.</p>
-    <p><strong>Order ID:</strong> {{ order.id }}</p>
-    <p><strong>Name:</strong> {{ order.full_name }}</p>
-    <p><strong>Email:</strong> {{ order.email }}</p>
-    <p><strong>Total:</strong> ${{ order.total_price }}</p>
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <h2 class="mb-3">Order Placed Successfully</h2>
+            <p>Thank you for your order.</p>
 
-    <a href="{% url 'product_list' %}" class="btn btn-primary">Continue Shopping</a>
+            <p><strong>Order ID:</strong> {{ order.id }}</p>
+            <p><strong>Name:</strong> {{ order.full_name }}</p>
+            <p><strong>Email:</strong> {{ order.email }}</p>
+            <p><strong>Total:</strong> ${{ order.total_price }}</p>
+
+            <div class="d-flex gap-2 mt-3">
+                <a href="{% url 'store:product_list' %}" class="btn btn-primary">Continue Shopping</a>
+                <a href="{% url 'store:order_list' %}" class="btn btn-secondary">View My Orders</a>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

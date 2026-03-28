@@ -1,84 +1,61 @@
-{% extends 'base.html' %}
+{% extends "store/base.html" %}
+
+{% block title %}Checkout | Django eCommerce{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-    <h2>Checkout</h2>
+    <h2 class="mb-4">Checkout</h2>
 
     <div class="row">
         <div class="col-md-6">
-            <h4>Your Details</h4>
-            <form method="post">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-primary">Place Order</button>
-            </form>
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h4 class="mb-3">Your Details</h4>
+
+                    <form method="post">
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        {{ form.as_p }}
+
+                        <button type="submit" class="btn btn-primary mt-3">
+                            Place Order
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
 
         <div class="col-md-6">
-            <h4>Order Summary</h4>
-            <ul class="list-group mb-3">
-                {% for item in cart_items %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            {{ item.product.name }}<br>
-                            <small>Quantity: {{ item.quantity }}</small>
-                        </div>
-                        <span>${{ item.subtotal }}</span>
-                    </li>
-                {% endfor %}
-            </ul>
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h4 class="mb-3">Order Summary</h4>
 
-            <h5>Total: ${{ total }}</h5>
+                    {% if cart_items %}
+                        <ul class="list-group mb-3">
+                            {% for item in cart_items %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        {{ item.product.name }}<br>
+                                        <small>Quantity: {{ item.quantity }}</small>
+                                    </div>
+                                    <span>${{ item.subtotal }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+                        <h5>Total: ${{ total }}</h5>
+                    {% else %}
+                        <p>Your cart is empty.</p>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% extends 'store/base.html' %}
-
-{% block content %}
-<h2>Checkout</h2>
-
-{% if error %}
-<p style="color:red;">{{ error }}</p>
-{% endif %}
-
-<h3>Your Order</h3>
-<ul>
-    {% for item in cart_items %}
-        <li>
-            {{ item.product.name }} -
-            Qty: {{ item.quantity }} -
-            ${{ item.product.price }} each -
-            Subtotal: ${{ item.subtotal }}
-        </li>
-    {% endfor %}
-</ul>
-
-<p><strong>Total:</strong> ${{ total }}</p>
-
-<form method="POST">
-    {% csrf_token %}
-    <p>
-        <label>Full Name:</label><br>
-        <input type="text" name="full_name">
-    </p>
-    <p>
-        <label>Email:</label><br>
-        <input type="email" name="email">
-    </p>
-    <p>
-        <label>Address:</label><br>
-        <input type="text" name="address">
-    </p>
-    <p>
-        <label>City:</label><br>
-        <input type="text" name="city">
-    </p>
-    <p>
-        <label>Postal Code:</label><br>
-        <input type="text" name="postal_code">
-    </p>
-    <button type="submit">Place Order</button>
-</form>
 {% endblock %}

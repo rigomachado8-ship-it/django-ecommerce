@@ -1,30 +1,37 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>My Stores</title>
-</head>
-<body>
-    <h1>My Stores</h1>
+{% extends "store/base.html" %}
+
+{% block title %}My Stores | Django eCommerce{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">My Stores</h2>
 
     {% if messages %}
         {% for message in messages %}
-            <p>{{ message }}</p>
+            <div class="alert alert-info">{{ message }}</div>
         {% endfor %}
     {% endif %}
 
-    <p><a href="{% url 'store:create_store' %}">Create Store</a></p>
-    <p><a href="{% url 'store:vendor_dashboard' %}">Back to Dashboard</a></p>
+    <div class="d-flex gap-2 mb-4">
+        <a href="{% url 'store:create_store' %}" class="btn btn-success">Create Store</a>
+        <a href="{% url 'store:vendor_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
 
     {% for store in stores %}
-        <hr>
-        <h3>{{ store.name }}</h3>
-        <p>{{ store.description }}</p>
-        <p>{{ store.address }}</p>
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <h4>{{ store.name }}</h4>
+                <p class="mb-1">{{ store.description }}</p>
+                <p class="mb-3"><strong>Address:</strong> {{ store.address }}</p>
 
-        <p><a href="{% url 'store:store_update' store.pk %}">Edit</a></p>
-        <p><a href="{% url 'store:store_delete' store.pk %}">Delete</a></p>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'store:store_update' store.pk %}" class="btn btn-primary">Edit</a>
+                    <a href="{% url 'store:store_delete' store.pk %}" class="btn btn-danger">Delete</a>
+                </div>
+            </div>
+        </div>
     {% empty %}
-        <p>No stores yet.</p>
+        <div class="alert alert-info">No stores yet.</div>
     {% endfor %}
-</body>
-</html>
+</div>
+{% endblock %}
