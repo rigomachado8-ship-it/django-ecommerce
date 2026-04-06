@@ -1,0 +1,42 @@
+{% extends "store/base.html" %}
+
+{% block title %}Home | Django eCommerce{% endblock %}
+
+{% block content %}
+<div class="text-center mb-5">
+    <h1 class="display-4 fw-bold">Django eCommerce Home</h1>
+    <p class="lead text-muted">Welcome to the eCommerce platform.</p>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <div class="d-grid gap-3">
+                    {% if user.is_authenticated %}
+                        {% if user.profile.role == "buyer" %}
+                            <a href="{% url 'store:buyer_dashboard' %}" class="btn btn-success btn-lg">
+                                Buyer Dashboard
+                            </a>
+                        {% elif user.profile.role == "vendor" %}
+                            <a href="{% url 'store:vendor_dashboard' %}" class="btn btn-warning btn-lg">
+                                Vendor Dashboard
+                            </a>
+                        {% endif %}
+                        <a href="{% url 'store:logout' %}" class="btn btn-danger btn-lg">
+                            Logout
+                        </a>
+                    {% else %}
+                        <a href="{% url 'store:register' %}" class="btn btn-primary btn-lg">
+                            Register
+                        </a>
+                        <a href="{% url 'store:login' %}" class="btn btn-outline-primary btn-lg">
+                            Login
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

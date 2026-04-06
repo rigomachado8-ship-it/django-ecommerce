@@ -1,22 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Buyer Dashboard</title>
-</head>
-<body>
-    <h1>Buyer Dashboard</h1>
-    <p>Welcome, {{ request.user.username }}!</p>
-    <p>You are logged in as a buyer.</p>
+{% extends "store/base.html" %}
 
-    {% if messages %}
-        {% for message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
-    {% endif %}
+{% block title %}Buyer Dashboard | Django eCommerce{% endblock %}
 
-    <p><a href="{% url 'store:store_list' %}">Browse Stores</a></p>
-    <p><a href="{% url 'store:logout' %}">Logout</a></p>
-</body>
-</html>
+{% block content %}
+<h1>Buyer Dashboard</h1>
 
-<a href="{% url 'store:order_list' %}">My Orders</a>
+<p>Welcome, {{ request.user.username }}!</p>
+<p>You are logged in as a buyer.</p>
+
+<ul>
+    <li><a href="{% url 'store:store_list' %}">Browse Stores</a></li>
+    <li><a href="{% url 'store:product_list' %}">Shop (Browse Products)</a></li>
+    <li><a href="{% url 'store:order_list' %}">My Orders</a></li>
+    <li><a href="{% url 'store:cart_detail' %}">View Cart</a></li>
+    <li><a href="{% url 'store:logout' %}">Logout</a></li>
+</ul>
+{% endblock %}

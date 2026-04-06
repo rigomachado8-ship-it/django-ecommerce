@@ -1,16 +1,12 @@
-"""
-Forms used throughout the eCommerce application.
-"""
+""" Forms used throughout the eCommerce application. """
 
 from django import forms
 
-from .models import Order, Product, Store
+from .models import Order, Product, Review, Store
 
 
 class RegisterForm(forms.Form):
-    """
-    Form used to register a new user account.
-    """
+    """ Form used to register a new user account. """
 
     ROLE_CHOICES = (
         ("buyer", "Buyer"),
@@ -36,9 +32,7 @@ class RegisterForm(forms.Form):
     )
 
     def clean(self):
-        """
-        Validate matching passwords.
-        """
+        """ Validate matching passwords. """
         cleaned_data = super().clean()
         password = cleaned_data.get("password")
         confirm_password = cleaned_data.get("confirm_password")
@@ -50,9 +44,7 @@ class RegisterForm(forms.Form):
 
 
 class LoginForm(forms.Form):
-    """
-    Form used to log in an existing user.
-    """
+    """ Form used to log in an existing user. """
 
     username = forms.CharField(
         max_length=150,
@@ -64,9 +56,7 @@ class LoginForm(forms.Form):
 
 
 class StoreForm(forms.ModelForm):
-    """
-    Form used by vendors to create and update stores.
-    """
+    """ Form used by vendors to create and update stores. """
 
     class Meta:
         model = Store
@@ -79,9 +69,7 @@ class StoreForm(forms.ModelForm):
 
 
 class ProductForm(forms.ModelForm):
-    """
-    Form used by vendors to create and update products.
-    """
+    """ Form used by vendors to create and update products. """
 
     class Meta:
         model = Product
@@ -97,22 +85,22 @@ class ProductForm(forms.ModelForm):
 
 
 class CartAddProductForm(forms.Form):
-    """
-    Form used to add or update product quantities in the cart.
-    """
+    """ Form used to add or update product quantities in the cart. """
 
     quantity = forms.IntegerField(
         min_value=1,
         initial=1,
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
-    override = forms.BooleanField(required=False, initial=False, widget=forms.HiddenInput)
+    override = forms.BooleanField(
+        required=False,
+        initial=False,
+        widget=forms.HiddenInput,
+    )
 
 
 class CheckoutForm(forms.ModelForm):
-    """
-    Form used to collect customer checkout information.
-    """
+    """ Form used to collect customer checkout information. """
 
     class Meta:
         model = Order
@@ -124,3 +112,26 @@ class CheckoutForm(forms.ModelForm):
             "city": forms.TextInput(attrs={"class": "form-control"}),
             "postal_code": forms.TextInput(attrs={"class": "form-control"}),
         }
+
+
+class ReviewForm(forms.ModelForm):
+    """ Form used by buyers to submit or update a product review. """
+
+    class Meta:
+        model = Review
+        fields = ["rating", "comment"]
+        widgets = {
+            "rating": forms.NumberInput(
+                attrs={"class": "form-control", "min": 1, "max": 5}
+            ),
+            "comment": forms.Textarea(
+                attrs={"class": "form-control", "rows": 4}
+            ),
+        }
+
+    def clean_rating(self):
+        """Ensure rating stays between 1 and 5."""
+        rating = self.cleaned_data["rating"]
+        if rating < 1 or rating > 5:
+            raise forms.ValidationError("Rating must be between 1 and 5.")
+        return rating

@@ -1,0 +1,21 @@
+{% extends "store/base.html" %}
+
+{% block content %}
+<h2>Vendor Dashboard</h2>
+
+<p class="lead">Welcome, {{ request.user.username }}!</p>
+
+<div class="d-flex gap-3 mt-4">
+    <a class="btn btn-primary" href="{% url 'store:vendor_store_list' %}">
+        Manage Stores
+    </a>
+
+    <a class="btn btn-success" href="{% url 'store:vendor_product_list' %}">
+        Manage Products
+    </a>
+
+    <a class="btn btn-danger" href="{% url 'store:logout' %}">
+        Logout
+    </a>
+</div>
+{% endblock %}

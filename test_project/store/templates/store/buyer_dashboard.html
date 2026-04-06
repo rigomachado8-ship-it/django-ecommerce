@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Buyer Dashboard</title>
+</head>
+<body>
+    <h1>Buyer Dashboard</h1>
+    <p>Welcome, {{ request.user.username }}!</p>
+    <p>You are logged in as a buyer.</p>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <p><a href="{% url 'store:store_list' %}">Browse Stores</a></p>
+    <p><a href="{% url 'store:logout' %}">Logout</a></p>
+</body>
+</html>
+
+<a href="{% url 'store:order_list' %}">My Orders</a>

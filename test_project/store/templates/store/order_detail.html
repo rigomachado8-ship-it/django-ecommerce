@@ -1,0 +1,43 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<h2>Order Details</h2>
+
+<h3>Order #{{ order.id }}</h3>
+
+<p><strong>Name:</strong> {{ order.full_name }}</p>
+<p><strong>Email:</strong> {{ order.email }}</p>
+<p><strong>Address:</strong> {{ order.address }}</p>
+<p><strong>City:</strong> {{ order.city }}</p>
+<p><strong>Postal Code:</strong> {{ order.postal_code }}</p>
+<p><strong>Status:</strong> {{ order.status }}</p>
+
+<hr>
+
+<h3>Items in this order</h3>
+
+<table border="1" cellpadding="10">
+    <tr>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Subtotal</th>
+    </tr>
+
+    {% for item in order_items %}
+    <tr>
+        <td>{{ item.product.name }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>${{ item.price }}</td>
+        <td>${{ item.price|floatformat:2|add:"0"|floatformat:2|floatformat:2 }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h3>Total: ${{ order.total_price }}</h3>
+
+<br>
+
+<a href="{% url 'store:order_list' %}">← Back to My Orders</a>
+
+{% endblock %}

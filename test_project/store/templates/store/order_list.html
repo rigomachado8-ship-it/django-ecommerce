@@ -1,0 +1,30 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<h2>My Orders</h2>
+
+{% if orders %}
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>Order ID</th>
+            <th>Total Price</th>
+            <th>Status</th>
+            <th>View</th>
+        </tr>
+
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.id }}</td>
+            <td>${{ order.total_price }}</td>
+            <td>{{ order.status }}</td>
+            <td>
+                <a href="{% url 'store:order_detail' order.id %}">View Details</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>You have not placed any orders yet.</p>
+{% endif %}
+
+{% endblock %}
