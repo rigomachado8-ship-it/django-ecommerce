@@ -1,159 +1,102 @@
-# Django E-commerce Project
+# 🛒 Django E-commerce Project
 
-## Overview
-This is the final version of my Django e-commerce project built with Django.
+## 🚀 Live Overview
 
-## Clone
-git clone https://github.com/rigomachado8-ship-it/django-ecommerce.git
-cd django-ecommerce
----
+This is a full-featured e-commerce web application built with Django.
+It includes user authentication, product management, cart functionality, checkout flow, and verified purchase reviews.
 
-## Technologies Used
-
-* Python 3
-* Django
-* Django REST Framework
-* MySQL
-* HTML (Django Templates)
-* Bootstrap 5
+> ✅ This repository contains a **single, clean Django project** intended for review and demonstration purposes.
 
 ---
 
-## Features
+## 📸 Screenshots
 
-### User Management
+*(Add screenshots here later for extra impact)*
 
-* User registration with role selection (buyer/vendor)
-* Login and logout functionality
-* Role-based dashboards
+Example:
 
-### Vendor Features
-
-* Create, update, and delete stores
-* Add, update, and delete products
-* View products by store
-
-### Buyer Features
-
-* Browse products
-* Add products to cart
-* Checkout and place orders
-* View order history
-
-### Additional Features
-
-* Product reviews
-* Password reset via email
-* Reddit feed integration
-* REST API endpoints for stores, products, and reviews
+* Home page
+* Product detail page
+* Cart page
+* Admin dashboard
 
 ---
 
-## Project Structure
+## ✨ Features
 
-```
-store/
-├── models.py
-├── views.py
-├── serializers.py
-├── forms.py
-├── templates/
-│   └── store/
-│       ├── base.html
-│       ├── home.html
-│       └── ...
-```
+### 👤 Authentication
+
+* User registration and login
+* Password reset functionality
+
+### 🛍️ Store
+
+* Product listing and detail pages
+* Image uploads for products
+* Category-based organization (if implemented)
+
+### 🛒 Shopping Experience
+
+* Add/remove items from cart
+* Persistent cart behavior
+* Checkout flow
+
+### ⭐ Reviews
+
+* Users can leave product reviews
+* Reviews restricted to **verified purchasers**
+
+### ⚙️ Admin Panel
+
+* Manage products, users, and orders via Django admin
 
 ---
 
-## Setup Instructions
+## 🧰 Tech Stack
+
+* **Backend:** Django (Python)
+* **Database:** MySQL / SQLite (development)
+* **Frontend:** HTML, CSS (Django Templates)
+* **Media Handling:** Pillow
+
+---
+
+## ⚡ Getting Started
 
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/rigomachado8-ship-it/django_ecommerce_part1.git
-cd django_ecommerce_part1
+git clone https://github.com/rigomachado8-ship-it/django-ecommerce.git
+cd django-ecommerce
 ```
 
----
-
-## Database Setup (MySQL) ⚠️ IMPORTANT
-
-### 1. Start MySQL
+### 2. Create virtual environment
 
 ```bash
-mysql -u root -p
+python -m venv venv
+source venv/bin/activate   # Mac/Linux
+venv\Scripts\activate      # Windows
 ```
 
-Enter your MySQL password.
-
----
-
-### 2. Create the database
-
-```sql
-CREATE DATABASE ecommerce_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
-
----
-
-### 3. (Optional but Recommended) Create a dedicated user
-
-```sql
-CREATE USER 'ecom_user'@'localhost' IDENTIFIED BY 'StrongPassword123!';
-GRANT ALL PRIVILEGES ON ecommerce_db.* TO 'ecom_user'@'localhost';
-FLUSH PRIVILEGES;
-```
-
----
-
-### 4. Configure Django database settings
-
-Update `settings.py`:
-
-```python
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ecommerce_db',
-        'USER': 'root',  # or 'ecom_user'
-        'PASSWORD': 'YOUR_PASSWORD',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-    }
-}
-```
-
----
-
-## Installation
-
-### 1. Install dependencies
+### 3. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
----
-
-### 2. Run migrations
+### 4. Run migrations
 
 ```bash
-python manage.py makemigrations
 python manage.py migrate
 ```
 
----
-
-### 3. Create superuser
+### 5. Create admin user
 
 ```bash
 python manage.py createsuperuser
 ```
 
----
-
-### 4. Run development server
+### 6. Start server
 
 ```bash
 python manage.py runserver
@@ -161,52 +104,58 @@ python manage.py runserver
 
 ---
 
-### 5. Access the application
+## 🌐 Access the App
 
-* Home: http://127.0.0.1:8000/
-* Admin: http://127.0.0.1:8000/admin/
-
----
-
-## API Endpoints
-
-| Endpoint                     | Method   | Description       |
-| ---------------------------- | -------- | ----------------- |
-| `/api/product/list/`         | GET      | List all products |
-| `/api/product/<id>/`         | GET      | Product details   |
-| `/api/product/create/`       | POST     | Create product    |
-| `/api/store/create/`         | POST     | Create store      |
-| `/api/store/<id>/products/`  | GET      | Store products    |
-| `/api/vendor/<id>/stores/`   | GET      | Vendor stores     |
-| `/api/product/<id>/reviews/` | GET/POST | Product reviews   |
+* Main app: http://127.0.0.1:8000/
+* Admin panel: http://127.0.0.1:8000/admin/
 
 ---
 
-## Design Considerations
+## 🧪 Demo Account (Optional)
 
-* Models are designed with proper relationships (Store → Product → Order)
-* Validation ensures data integrity (e.g., store must have description and address)
-* Role-based access control for buyers and vendors
-* Clean separation of concerns using forms, serializers, and views
+*(Add this later if you want reviewers to log in easily)*
 
----
-
-## Code Quality
-
-* Docstrings follow PEP 257 conventions
-* Clear and modular structure
-* Reusable components across views, forms, and templates
+```text
+Username: demo
+Password: demo123
+```
 
 ---
 
-## Author
+## 📂 Project Structure
 
-Rodrigo Machado
+```text
+django-ecommerce/
+├── ecommerce_project/   # Main project settings
+├── store/               # Core app (products, cart, orders)
+├── manage.py
+├── requirements.txt
+└── README.md
+```
 
 ---
 
-## Notes
+## 🔮 Future Improvements
 
-* Ensure MySQL is running before starting the Django server
-* Database must be created before running migrations
-* Use a virtual environment for dependency management
+* 💳 Payment integration (Stripe/PayPal)
+* 📦 Order tracking system
+* 🌍 Deployment (AWS, Render, or Railway)
+* 🎨 Improved UI/UX (React or Tailwind)
+* 📊 Analytics dashboard
+
+---
+
+## 🧠 What I Learned
+
+* Building a full-stack Django application
+* Structuring scalable Django apps
+* Implementing authentication and authorization
+* Designing real-world e-commerce logic (cart, checkout, reviews)
+
+---
+
+## 👨‍💻 Author
+
+**Rodrigo Machado**
+
+GitHub: https://github.com/rigomachado8-ship-it
