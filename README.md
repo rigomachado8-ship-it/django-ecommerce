@@ -1,11 +1,11 @@
-# Django eCommerce Project (Part 1)
+# Django E-commerce Project
 
 ## Overview
+This is the final version of my Django e-commerce project built with Django.
 
-This project is a Django-based eCommerce web application that allows users to register as buyers or vendors. Vendors can create stores and manage products, while buyers can browse products, add them to a cart, and place orders.
-
-The system also includes REST API endpoints, authentication, and password reset functionality.
-
+## Clone
+git clone https://github.com/rigomachado8-ship-it/django-ecommerce.git
+cd django-ecommerce
 ---
 
 ## Technologies Used
